@@ -1,0 +1,25 @@
+.DS_Store
+node_modules/
+*.log
+
+# Android
+.gradle/
+**/android/build/
+**/android/app/build/
+**/android/app/debug.keystore
+local.properties
+
+# iOS
+**/ios/Pods/
+**/ios/build/
+**/ios/tests/build/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+
+# React Native
+**/.bundle/
+**/build/generated/
+coverage/
+
+# Generated package output
+dist/

@@ -1,0 +1,41 @@
+{
+  "name": "@brightcove/react-native-player",
+  "version": "0.0.0",
+  "private": true,
+  "description": "React Native bridge for the Brightcove native player SDKs",
+  "main": "src/index",
+  "scripts": {
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "codegenConfig": {
+    "name": "BrightcovePlayerViewSpec",
+    "type": "all",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.brightcove.reactnativeplayer"
+    },
+    "ios": {
+      "components": {
+        "BrightcovePlayerView": {
+          "className": "BrightcovePlayerView"
+        }
+      }
+    }
+  },
+  "author": "Brightcove",
+  "license": "Apache-2.0",
+  "homepage": "https://www.brightcove.com/",
+  "peerDependencies": {
+    "react": "19.2.3",
+    "react-native": "0.86.2"
+  },
+  "create-react-native-library": {
+    "type": "fabric-view",
+    "languages": "kotlin-objc",
+    "tools": [
+      "eslint"
+    ],
+    "version": "0.63.0"
+  }
+}

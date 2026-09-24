@@ -1,0 +1,309 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classCount = 0;
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1000000000000000000000A /* BCOVErrorCategory.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000010 /* BCOVErrorCategory.mm */; };
+		A1000000000000000000000B /* BCOVErrorCategoryTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000012 /* BCOVErrorCategoryTests.mm */; };
+		A10000000000000000000016 /* BCOVQueueCommandOutcome.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000014 /* BCOVQueueCommandOutcome.mm */; };
+		A10000000000000000000017 /* BCOVQueueCommandOutcomeTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000015 /* BCOVQueueCommandOutcomeTests.mm */; };
+		A1000000000000000000001A /* BCOVVideoIdentity.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000018 /* BCOVVideoIdentity.mm */; };
+		A1000000000000000000001B /* BCOVVideoIdentityTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000019 /* BCOVVideoIdentityTests.mm */; };
+		A1000000000000000000001C /* BCOVDeferredErrorFlush.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001E /* BCOVDeferredErrorFlush.mm */; };
+		A1000000000000000000001F /* BCOVDeferredErrorFlushTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000023 /* BCOVDeferredErrorFlushTests.mm */; };
+		A1000000000000000000002A /* BCOVPlayerTeardown.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000024 /* BCOVPlayerTeardown.mm */; };
+		A1000000000000000000002B /* BCOVPlayerTeardownTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000025 /* BCOVPlayerTeardownTests.mm */; };
+		A10000000000000000000062 /* BCOVPlaybackAdvancePolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000063 /* BCOVPlaybackAdvancePolicy.mm */; };
+		A10000000000000000000064 /* BCOVPlaybackAdvancePolicyTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000065 /* BCOVPlaybackAdvancePolicyTests.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A1000000000000000000000C /* BrightcovePlayerCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BrightcovePlayerCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000010 /* BCOVErrorCategory.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = BCOVErrorCategory.mm; path = ../core/BCOVErrorCategory.mm; sourceTree = "<group>"; };
+		A10000000000000000000011 /* BCOVErrorCategory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BCOVErrorCategory.h; path = ../core/BCOVErrorCategory.h; sourceTree = "<group>"; };
+		A10000000000000000000012 /* BCOVErrorCategoryTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BCOVErrorCategoryTests.mm; sourceTree = "<group>"; };
+		A10000000000000000000013 /* BCOVQueueCommandOutcome.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BCOVQueueCommandOutcome.h; path = ../playlists/BCOVQueueCommandOutcome.h; sourceTree = "<group>"; };
+		A10000000000000000000014 /* BCOVQueueCommandOutcome.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = BCOVQueueCommandOutcome.mm; path = ../playlists/BCOVQueueCommandOutcome.mm; sourceTree = "<group>"; };
+		A10000000000000000000015 /* BCOVQueueCommandOutcomeTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BCOVQueueCommandOutcomeTests.mm; sourceTree = "<group>"; };
+		A10000000000000000000018 /* BCOVVideoIdentity.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = BCOVVideoIdentity.mm; path = ../core/BCOVVideoIdentity.mm; sourceTree = "<group>"; };
+		A10000000000000000000021 /* BCOVVideoIdentity.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BCOVVideoIdentity.h; path = ../core/BCOVVideoIdentity.h; sourceTree = "<group>"; };
+		A10000000000000000000019 /* BCOVVideoIdentityTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BCOVVideoIdentityTests.mm; sourceTree = "<group>"; };
+		A1000000000000000000001E /* BCOVDeferredErrorFlush.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = BCOVDeferredErrorFlush.mm; path = ../core/BCOVDeferredErrorFlush.mm; sourceTree = "<group>"; };
+		A10000000000000000000022 /* BCOVDeferredErrorFlush.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BCOVDeferredErrorFlush.h; path = ../core/BCOVDeferredErrorFlush.h; sourceTree = "<group>"; };
+		A10000000000000000000023 /* BCOVDeferredErrorFlushTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BCOVDeferredErrorFlushTests.mm; sourceTree = "<group>"; };
+		A10000000000000000000024 /* BCOVPlayerTeardown.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = BCOVPlayerTeardown.mm; path = ../core/BCOVPlayerTeardown.mm; sourceTree = "<group>"; };
+		A10000000000000000000025 /* BCOVPlayerTeardownTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BCOVPlayerTeardownTests.mm; sourceTree = "<group>"; };
+		A1000000000000000000002C /* BCOVPlayerTeardown.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BCOVPlayerTeardown.h; path = ../core/BCOVPlayerTeardown.h; sourceTree = "<group>"; };
+		A10000000000000000000063 /* BCOVPlaybackAdvancePolicy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = BCOVPlaybackAdvancePolicy.mm; path = ../core/BCOVPlaybackAdvancePolicy.mm; sourceTree = "<group>"; };
+		A10000000000000000000031 /* BCOVPlaybackAdvancePolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BCOVPlaybackAdvancePolicy.h; path = ../core/BCOVPlaybackAdvancePolicy.h; sourceTree = "<group>"; };
+		A10000000000000000000065 /* BCOVPlaybackAdvancePolicyTests.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BCOVPlaybackAdvancePolicyTests.mm; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		A10000000000000000000020 = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000012 /* BCOVErrorCategoryTests.mm */,
+				A10000000000000000000015 /* BCOVQueueCommandOutcomeTests.mm */,
+				A10000000000000000000019 /* BCOVVideoIdentityTests.mm */,
+				A10000000000000000000023 /* BCOVDeferredErrorFlushTests.mm */,
+				A10000000000000000000025 /* BCOVPlayerTeardownTests.mm */,
+				A10000000000000000000065 /* BCOVPlaybackAdvancePolicyTests.mm */,
+				A10000000000000000000026 /* core */,
+				A10000000000000000000027 /* playlists */,
+				A10000000000000000000028 /* Products */,
+				A10000000000000000000029 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		A10000000000000000000026 /* core */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000011 /* BCOVErrorCategory.h */,
+				A10000000000000000000021 /* BCOVVideoIdentity.h */,
+				A10000000000000000000018 /* BCOVVideoIdentity.mm */,
+				A10000000000000000000022 /* BCOVDeferredErrorFlush.h */,
+				A1000000000000000000001E /* BCOVDeferredErrorFlush.mm */,
+				A1000000000000000000002C /* BCOVPlayerTeardown.h */,
+				A10000000000000000000024 /* BCOVPlayerTeardown.mm */,
+				A10000000000000000000031 /* BCOVPlaybackAdvancePolicy.h */,
+				A10000000000000000000063 /* BCOVPlaybackAdvancePolicy.mm */,
+				A10000000000000000000010 /* BCOVErrorCategory.mm */,
+			);
+			name = core;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000027 /* playlists */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000013 /* BCOVQueueCommandOutcome.h */,
+				A10000000000000000000014 /* BCOVQueueCommandOutcome.mm */,
+			);
+			name = playlists;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000028 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1000000000000000000000C /* BrightcovePlayerCoreTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000029 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A10000000000000000000030 /* BrightcovePlayerCoreTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10000000000000000000040 /* Build configuration list for PBXNativeTarget "BrightcovePlayerCoreTests" */;
+			buildPhases = (
+				A10000000000000000000032 /* Sources */,
+				A10000000000000000000033 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BrightcovePlayerCoreTests;
+			packageProductDependencies = (
+				A10000000000000000000050 /* BrightcovePlayerSDK */,
+			);
+			productName = BrightcovePlayerCoreTests;
+			productReference = A1000000000000000000000C /* BrightcovePlayerCoreTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A1000000000000000000003A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1540;
+				LastUpgradeCheck = 1540;
+			};
+			buildConfigurationList = A1000000000000000000003B /* Build configuration list for PBXProject "BrightcovePlayerCoreTests" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A10000000000000000000020;
+			packageReferences = (
+				A1000000000000000000004A /* XCRemoteSwiftPackageReference "brightcove-player-sdk-ios" */,
+			);
+			productRefGroup = A10000000000000000000028 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A10000000000000000000030 /* BrightcovePlayerCoreTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A10000000000000000000032 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000000000000000000000A /* BCOVErrorCategory.mm in Sources */,
+				A1000000000000000000000B /* BCOVErrorCategoryTests.mm in Sources */,
+				A10000000000000000000016 /* BCOVQueueCommandOutcome.mm in Sources */,
+				A10000000000000000000017 /* BCOVQueueCommandOutcomeTests.mm in Sources */,
+				A1000000000000000000001A /* BCOVVideoIdentity.mm in Sources */,
+				A1000000000000000000001B /* BCOVVideoIdentityTests.mm in Sources */,
+				A1000000000000000000001C /* BCOVDeferredErrorFlush.mm in Sources */,
+				A1000000000000000000001F /* BCOVDeferredErrorFlushTests.mm in Sources */,
+				A1000000000000000000002A /* BCOVPlayerTeardown.mm in Sources */,
+				A1000000000000000000002B /* BCOVPlayerTeardownTests.mm in Sources */,
+				A10000000000000000000062 /* BCOVPlaybackAdvancePolicy.mm in Sources */,
+				A10000000000000000000064 /* BCOVPlaybackAdvancePolicyTests.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A10000000000000000000033 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXProductDependency section */
+		A10000000000000000000050 /* BrightcovePlayerSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BrightcovePlayerSDK;
+		};
+/* End PBXProductDependency section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A1000000000000000000004A /* XCRemoteSwiftPackageReference "brightcove-player-sdk-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/brightcove/brightcove-player-sdk-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.2.16;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCBuildConfiguration section */
+		A10000000000000000000060 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				OTHER_CPLUSPLUSFLAGS = "$(inherited) -fcxx-modules";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A10000000000000000000061 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				OTHER_CPLUSPLUSFLAGS = "$(inherited) -fcxx-modules";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		A10000000000000000000070 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				MARKETING_VERSION = 1.0;
+				OTHER_CPLUSPLUSFLAGS = "$(inherited) -fcxx-modules";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightcove.reactnativeplayer.BrightcovePlayerCoreTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A10000000000000000000071 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				MARKETING_VERSION = 1.0;
+				OTHER_CPLUSPLUSFLAGS = "$(inherited) -fcxx-modules";
+				PRODUCT_BUNDLE_IDENTIFIER = com.brightcove.reactnativeplayer.BrightcovePlayerCoreTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1000000000000000000003B /* Build configuration list for PBXProject "BrightcovePlayerCoreTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A10000000000000000000060 /* Debug */,
+				A10000000000000000000061 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A10000000000000000000040 /* Build configuration list for PBXNativeTarget "BrightcovePlayerCoreTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A10000000000000000000070 /* Debug */,
+				A10000000000000000000071 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A1000000000000000000003A /* Project object */;
+}

@@ -1,0 +1,325 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bridge-copies:
+    name: bridge copies match reference
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - run: ./scripts/check-bridge-copies.sh
+      - run: ./scripts/check-bridge-regeneration.sh
+      - run: ./scripts/check-doc-paths.sh
+
+  # Discover every sample under samples/*/* and emit a matrix of
+  # {dir, name} so the js/android/ios jobs below run for each sample
+  # automatically. A new sample cannot ship without full coverage because it
+  # is picked up here — there is no hand-written per-sample job to forget.
+  # `name` is the iOS workspace/scheme (from the sample's app.json).
+  discover-samples:
+    name: discover samples
+    runs-on: ubuntu-latest
+    outputs:
+      samples: ${{ steps.find.outputs.samples }}
+      native_samples: ${{ steps.find.outputs.native_samples }}
+      web_samples: ${{ steps.find.outputs.web_samples }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - id: find
+        run: |
+          . scripts/feature-catalog.sh
+          allowed_opt_outs="$ALLOWED_NATIVE_BUILD_OPTOUTS"
+          node -e '
+            const fs = require("fs");
+            const path = require("path");
+            const allowed = new Set((process.argv[1] || "").split(" "));
+            const allSamples = [];
+
+            // Enumerate directories first, then require the sample manifest. A
+            // loop over package.json files would silently drop a sample whose
+            // manifest was deleted or renamed, shrinking every platform matrix
+            // without any signal — the discovery predicate must not also be the
+            // existence check.
+            const sampleDirs = fs.readdirSync("samples/player")
+              .filter(d => fs.statSync(path.join("samples/player", d)).isDirectory());
+            const manifestErrors = [];
+            for (const d of sampleDirs) {
+              const dir = `samples/player/${d}`;
+              for (const required of ["package.json", "app.json", "modules/brightcove-player"]) {
+                if (!fs.existsSync(path.join(dir, required))) {
+                  manifestErrors.push(`ERROR: ${dir} is missing ${required}. Every sample directory must carry its manifest and embedded bridge.`);
+                }
+              }
+            }
+            if (manifestErrors.length) {
+              console.error(manifestErrors.join("\n"));
+              process.exit(1);
+            }
+
+            for (const pkg of sampleDirs.map(d => `samples/player/${d}/package.json`)) {
+              const dir = path.dirname(pkg);
+              const config = require(`./${dir}/app.json`);
+              const name = config.name || dir.split("/").pop();
+              const isWebOnly = config.platform === "web" || (Array.isArray(config.platforms) && config.platforms.length === 1 && config.platforms[0] === "web");
+              const hasWeb = isWebOnly || config.webBuild === true || (Array.isArray(config.platforms) && config.platforms.includes("web"));
+              if (hasWeb) {
+                const scripts = require(`./${dir}/package.json`).scripts || {};
+                const webScript = isWebOnly ? "build" : "web:build";
+                if (!fs.existsSync(path.join(dir, "webpack.config.js")) || !scripts[webScript]) {
+                  console.error(`ERROR: ${dir} declares Web support but lacks webpack.config.js or ${webScript}.`);
+                  process.exit(1);
+                }
+              }
+              const platform = isWebOnly ? "web" : (config.platform || "native");
+
+              const isNative = !isWebOnly;
+              const nativeBuildOptOut = isNative && config.nativeBuild === false;
+
+              if (nativeBuildOptOut) {
+                if (!allowed.has(dir)) {
+                  console.error(`ERROR: nativeBuild: false is not permitted for ${dir}. Only licensed vendor samples may opt out.`);
+                  process.exit(1);
+                }
+                if (!config.nativeBuildReason || !config.nativeBuildReason.trim()) {
+                  console.error(`ERROR: nativeBuild: false in ${dir} requires a non-empty nativeBuildReason.`);
+                  process.exit(1);
+                }
+              }
+
+              allSamples.push({
+                dir,
+                name,
+                platform,
+                isWeb: hasWeb,
+                isNative,
+                webScript: isWebOnly ? "build" : "web:build",
+                nativeBuild: isNative && !nativeBuildOptOut,
+                nativeBuildReason: config.nativeBuildReason || (isWebOnly ? "Web sample runs separate web JS/build job." : "")
+              });
+            }
+
+            const nativeSamples = allSamples.filter(s => s.isNative);
+            const webSamples = allSamples.filter(s => s.isWeb);
+
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `samples=${JSON.stringify(allSamples)}\n`);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `native_samples=${JSON.stringify(nativeSamples)}\n`);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, `web_samples=${JSON.stringify(webSamples)}\n`);
+            console.log(`Discovered ${allSamples.length} samples (${nativeSamples.length} native, ${webSamples.length} web).`);
+           ' "$allowed_opt_outs"
+
+  web:
+    name: ${{ matrix.sample.dir }} / web build
+    needs: discover-samples
+    if: ${{ fromJSON(needs.discover-samples.outputs.web_samples)[0] != null }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sample: ${{ fromJSON(needs.discover-samples.outputs.web_samples) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.sample.dir }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: ${{ matrix.sample.dir }}/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run typecheck:web
+      - run: npm run lint
+      - run: npm test
+      - run: npm run ${{ matrix.sample.webScript }}
+
+  js:
+    name: ${{ matrix.sample.dir }} / typecheck + lint + test
+    needs: discover-samples
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sample: ${{ fromJSON(needs.discover-samples.outputs.samples) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.sample.dir }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: ${{ matrix.sample.dir }}/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+
+  android:
+    name: ${{ matrix.sample.dir }} / android ${{ matrix.sample.nativeBuild && 'release build' || 'native build skipped' }}
+    needs: discover-samples
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sample: ${{ fromJSON(needs.discover-samples.outputs.native_samples) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.sample.dir }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: ${{ matrix.sample.dir }}/package-lock.json
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
+      - run: npm ci
+      - name: Explain native build limitation
+        if: ${{ !matrix.sample.nativeBuild }}
+        env:
+          NATIVE_BUILD_REASON: ${{ matrix.sample.nativeBuildReason }}
+        run: printf '::notice title=Native build skipped::%s\n' "$NATIVE_BUILD_REASON"
+      - run: ./gradlew :brightcove_react-native-player:testReleaseUnitTest :app:assembleRelease
+        if: ${{ matrix.sample.nativeBuild }}
+        working-directory: ${{ matrix.sample.dir }}/android
+
+  ios:
+    name: ${{ matrix.sample.dir }} / ios ${{ matrix.sample.nativeBuild && 'release build' || 'native build skipped' }}
+    needs: discover-samples
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        sample: ${{ fromJSON(needs.discover-samples.outputs.native_samples) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.sample.dir }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: ${{ matrix.sample.dir }}/package-lock.json
+      - uses: ruby/setup-ruby@a4effe49ee8ee5b8b5091268c473a4628afb5651 # v1.245.0
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: ${{ matrix.sample.dir }}
+      # The BrightcovePlayerSDK SwiftPM dependency clones ~1.6 GB of history on
+      # the first build; cache it so CI does not re-clone it every run.
+      - name: Cache SwiftPM
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm
+          key: swiftpm-${{ runner.os }}-${{ hashFiles(format('{0}/ios/Podfile.lock', matrix.sample.dir)) }}
+          restore-keys: swiftpm-${{ runner.os }}-
+      - run: npm ci
+      - run: bundle exec pod install
+        if: ${{ matrix.sample.nativeBuild }}
+        working-directory: ${{ matrix.sample.dir }}/ios
+      - name: Build (Release, simulator, no signing)
+        if: ${{ matrix.sample.nativeBuild }}
+        working-directory: ${{ matrix.sample.dir }}/ios
+        run: |
+          xcodebuild \
+            -workspace "${{ matrix.sample.name }}.xcworkspace" \
+            -scheme "${{ matrix.sample.name }}" \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+      - name: Explain native build limitation
+        if: ${{ !matrix.sample.nativeBuild }}
+        env:
+          NATIVE_BUILD_REASON: ${{ matrix.sample.nativeBuildReason }}
+        run: printf '::notice title=Native build skipped::%s\n' "$NATIVE_BUILD_REASON"
+
+  # Unit tests for the reference bridge's pure iOS classification/validation
+  # functions (BCOVErrorCategory and friends), compiled straight from
+  # reference/brightcove-player/ios — the same sources that ship in the pod,
+  # not a copy. Android extracts and unit-tests every such rule; until this
+  # job existed the iOS parallel was re-typed by hand and shipped untested.
+  # The test project links BrightcovePlayerSDK through SwiftPM (the same
+  # brightcove-player-sdk-ios package the podspec resolves) and needs no
+  # React Native/Fabric toolchain.
+  ios-unit-tests:
+    name: reference/brightcove-player / ios unit tests
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      # The BrightcovePlayerSDK SwiftPM dependency clones ~1.6 GB of history
+      # on the first resolve; cache it as the ios job does.
+      - name: Cache SwiftPM
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm
+          key: swiftpm-${{ runner.os }}-${{ hashFiles('reference/brightcove-player/ios/tests/BrightcovePlayerCoreTests.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+          restore-keys: swiftpm-${{ runner.os }}-
+      - name: Run unit tests (iOS Simulator)
+        working-directory: reference/brightcove-player/ios/tests
+        run: |
+          # Logic tests need a concrete simulator; resolve the first available
+          # iPhone so the job does not depend on one runner image's device set.
+          DESTINATION="$(xcrun simctl list devices available | awk '/iPhone/ {print; exit}')"
+          DESTINATION="$(echo "$DESTINATION" | sed -E 's/.*\(([0-9A-F-]{36})\).*/id=\1/')"
+          echo "Using simulator $DESTINATION"
+          xcodebuild \
+            -project BrightcovePlayerCoreTests.xcodeproj \
+            -scheme BrightcovePlayerCoreTests \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,$DESTINATION" \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            test
+
+  # Offline + DRM is the main reason customers use offline playback — a
+  # protected download — yet no sample installs both features, so the
+  # duplicate-FairPlay-provider path (exactly one provider may wrap the chain)
+  # has no build exercising it. This job composes the pair on every push:
+  # copy the offline-playback sample, re-assemble its bridge with `drm offline`
+  # added, and compile. The chain can never silently stop building regardless
+  # of which samples exist at any moment.
+  drm-offline-bridge:
+    name: scratch bridge / drm + offline android compile
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 24
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@9c971963bec38e04b3d30dcc455b5382be2fdbfb # v6.3.0
+      - name: Compose and compile a drm+offline bridge
+        run: |
+          set -euo pipefail
+          SCRATCH="$(mktemp -d)/drm-offline-sample"
+          cp -R samples/player/offline-playback "$SCRATCH"
+          cd "$SCRATCH"
+          rm -rf modules/brightcove-player node_modules android/build app/build
+          "$GITHUB_WORKSPACE/scripts/assemble-bridge.sh" --features "drm,offline" "$SCRATCH/modules/brightcove-player"
+          npm ci --no-audit --no-fund
+          cd android
+          ./gradlew :brightcove_react-native-player:compileReleaseKotlin --no-daemon

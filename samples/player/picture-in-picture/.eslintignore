@@ -1,0 +1,10 @@
+node_modules/
+dist/
+# Generated native build output — linting it produces hundreds of false
+# positives from Pods / derived data after a local iOS or Android build.
+ios/build/
+ios/Pods/
+vendor/
+android/build/
+android/app/build/
+modules/brightcove-player/android/build/

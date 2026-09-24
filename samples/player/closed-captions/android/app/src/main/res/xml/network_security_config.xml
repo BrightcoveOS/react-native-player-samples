@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Brightcove delivers sidecar WebVTT caption files over cleartext HTTP from its
+  signed CDN. Release builds disable cleartext traffic by default, which
+  silently blocks the caption fetch so captions never render. Permit cleartext
+  only for the Brightcove caption CDN, leaving the app secure by default
+  everywhere else.
+
+  This is scoped to the brightcovecdn.com apex (+ subdomains) because the exact
+  caption host is region/environment specific (e.g.
+  fastly-signed-us-east-1-prod.brightcovecdn.com). A production app should
+  narrow this to its own caption host, or remove it if its captions are served
+  over HTTPS. See the sample README ("Android cleartext caption fetch").
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">brightcovecdn.com</domain>
+    </domain-config>
+</network-security-config>

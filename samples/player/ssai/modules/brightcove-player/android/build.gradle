@@ -1,0 +1,88 @@
+buildscript {
+  ext.BrightcovePlayer = [
+    kotlinVersion: "2.0.21",
+    minSdkVersion: 24,
+    compileSdkVersion: 36,
+    brightcoveSdkVersion: "10.4.25",
+    lifecycleVersion: "2.8.7"
+  ]
+
+  ext.getExtOrDefault = { prop ->
+    if (rootProject.ext.has(prop)) {
+      return rootProject.ext.get(prop)
+    }
+
+    return BrightcovePlayer[prop]
+  }
+
+  repositories {
+    google()
+    mavenCentral()
+  }
+
+  dependencies {
+    classpath "com.android.tools.build:gradle:8.7.2"
+    // noinspection DifferentKotlinGradleVersion
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${getExtOrDefault('kotlinVersion')}"
+  }
+
+  // AGP 8.7.2's own APK-signing tooling (apksig/apkzlib) transitively pulls
+  // bcprov/bcpkix/bcutil-jdk18on:1.77, which carries several CVEs (including
+  // two the CVE feed rates critical) fixed in later releases. This is a
+  // buildscript-only classpath dependency of the Android Gradle Plugin
+  // itself — never a runtime dependency of the app or the Brightcove SDK —
+  // so forcing it here has no effect on anything the app ships or links
+  // against; it only changes which bouncycastle jar android.jar signing
+  // uses at build time.
+  configurations.classpath {
+    resolutionStrategy {
+      force "org.bouncycastle:bcprov-jdk18on:1.85"
+      force "org.bouncycastle:bcpkix-jdk18on:1.85"
+      force "org.bouncycastle:bcutil-jdk18on:1.85"
+    }
+  }
+}
+
+
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+
+apply plugin: "com.facebook.react"
+
+repositories {
+  google()
+  mavenCentral()
+  maven { url "https://repo.brightcove.com/releases" }
+}
+
+android {
+  namespace "com.brightcove.reactnativeplayer"
+
+  compileSdkVersion getExtOrDefault("compileSdkVersion")
+
+  defaultConfig {
+    minSdkVersion getExtOrDefault("minSdkVersion")
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+    coreLibraryDesugaringEnabled true
+  }
+}
+
+dependencies {
+  implementation "com.facebook.react:react-android"
+  implementation "com.brightcove.player:android-sdk:${getExtOrDefault('brightcoveSdkVersion')}"
+  implementation "com.brightcove.player:exoplayer2:${getExtOrDefault('brightcoveSdkVersion')}"
+  implementation "androidx.lifecycle:lifecycle-common-java8:${getExtOrDefault('lifecycleVersion')}"
+  testImplementation "junit:junit:4.13.2"
+  coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.1.3"
+  testImplementation "junit:junit:4.13.2"
+  // BRIDGE:FEATURE_DEPS — extra dependencies required by installed features
+  // (ads -> android-ima-plugin). scripts/assemble-bridge.sh regenerates the
+  // lines below this marker from the installed feature set, so this dependency
+  // block is a generated composition root — do not hand-edit feature deps.
+  implementation "com.brightcove.player:android-ssai-plugin:${getExtOrDefault('brightcoveSdkVersion')}"
+  implementation "com.brightcove.player:android-thumbnail-plugin:${getExtOrDefault('brightcoveSdkVersion')}"
+}
